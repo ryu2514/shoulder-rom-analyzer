@@ -8,6 +8,7 @@ const modeSel = $("#mode");
 const sideSel = $("#side");
 const startBtn = $("#startLive");
 const stopBtn = $("#stopLive");
+const switchCameraBtn = $("#switchCamera");
 const fileInput = $("#videoFile");
 const processBtn = $("#processVideo");
 const forceMp4 = $("#forceMp4");
@@ -23,6 +24,7 @@ const displayModeEl = $("#displayMode");
 
 let landmarker;
 let runningLive = false;
+let currentFacingMode = 'environment'; // 'environment' (back) or 'user' (front)
 
 // Angle utilities (JS port)
 const Mode = { ABDUCTION: "ABDUCTION", FLEXION: "FLEXION" };
@@ -231,21 +233,63 @@ function ema(x) { emaY = (emaY==null)? x : (alpha*x + (1-alpha)*emaY); return em
 
 async function startLive() {
   if (!landmarker) await initPose();
-  const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+  const stream = await navigator.mediaDevices.getUserMedia({
+    video: { facingMode: currentFacingMode },
+    audio: false
+  });
   video.srcObject = stream; await video.play();
-  runningLive = true; startBtn.disabled = true; stopBtn.disabled = false;
+  runningLive = true;
+  startBtn.disabled = true;
+  stopBtn.disabled = false;
+  switchCameraBtn.disabled = false;
   peakAngle = null; emaY = null;
   loopLive();
 }
 
 function stopLive() {
-  runningLive = false; startBtn.disabled = false; stopBtn.disabled = true;
+  runningLive = false;
+  startBtn.disabled = false;
+  stopBtn.disabled = true;
+  switchCameraBtn.disabled = true;
   const s = video.srcObject; if (s) { s.getTracks().forEach(t=>t.stop()); video.srcObject = null; }
   ctx.clearRect(0,0,overlay.width, overlay.height);
   // Reset angle display
   currentAngleEl.textContent = '--';
   peakAngleEl.textContent = '--';
   displayModeEl.textContent = '--';
+}
+
+async function switchCamera() {
+  if (!runningLive) return;
+
+  // Toggle facing mode
+  currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+
+  // Stop current stream
+  const s = video.srcObject;
+  if (s) {
+    s.getTracks().forEach(t => t.stop());
+  }
+
+  // Start new stream with new facing mode
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: currentFacingMode },
+      audio: false
+    });
+    video.srcObject = stream;
+    await video.play();
+  } catch (err) {
+    console.error('Error switching camera:', err);
+    // If switch fails, try to restart with original facing mode
+    currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: currentFacingMode },
+      audio: false
+    });
+    video.srcObject = stream;
+    await video.play();
+  }
 }
 
 function loopLive() {
@@ -418,6 +462,7 @@ async function convertWebMToMp4(webmBlob, onProgress) {
 // Wire up
 startBtn.addEventListener('click', startLive);
 stopBtn.addEventListener('click', stopLive);
+switchCameraBtn.addEventListener('click', switchCamera);
 fileInput.addEventListener('change', ()=> { processBtn.disabled = !fileInput.files?.length; });
 processBtn.addEventListener('click', processSelectedVideo);
 

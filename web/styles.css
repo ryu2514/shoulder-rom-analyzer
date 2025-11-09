@@ -201,6 +201,17 @@ button#cancelBtn {
   border: none !important;
 }
 
+button#switchCamera {
+  background: #8b5cf6 !important;
+  color: white !important;
+  border: none !important;
+}
+
+button#switchCamera:hover:not(:disabled) {
+  background: #7c3aed !important;
+  transform: translateY(-1px);
+}
+
 select {
   padding: 10px 16px;
   border: 2px solid #e2e8f0;
