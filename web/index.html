@@ -15,7 +15,7 @@
   </header>
 
   <main>
-    <div id="httpsWarn" class="warn" style="display:none">Use HTTPS or localhost for camera/video access.</div>
+    <div id="httpsWarn" class="warn" style="display:none">カメラアクセスにはHTTPSまたはlocalhostが必要です。</div>
     <section class="controls">
       <div class="row">
         <label>Mode:</label>
@@ -30,20 +30,20 @@
         </select>
       </div>
       <div class="row">
-        <button id="startLive">Start Webcam</button>
-        <button id="stopLive" disabled>Stop</button>
-        <button id="switchCamera" disabled>Switch Camera</button>
+        <button id="startLive">カメラで測定</button>
+        <button id="stopLive" disabled>停止</button>
+        <button id="switchCamera" disabled>カメラ切替</button>
       </div>
       <div class="row">
         <input type="file" id="videoFile" accept="video/*" />
       </div>
       <div class="row">
-        <button id="processVideo" disabled>Overlay & Export</button>
-        <label class="small"><input type="checkbox" id="forceMp4" checked /> Force MP4</label>
+        <button id="processVideo" disabled>動画を処理</button>
+        <label class="small"><input type="checkbox" id="forceMp4" checked /> MP4形式</label>
       </div>
       <div class="row" id="progressRow" style="display:none">
-        <div id="progressText" class="small">Preparing…</div>
-        <button id="cancelBtn">Cancel</button>
+        <div id="progressText" class="small">準備中…</div>
+        <button id="cancelBtn">キャンセル</button>
       </div>
       <div class="row small" id="status">Idle</div>
     </section>
@@ -59,25 +59,25 @@
 
     <section class="angle-display">
       <div class="angle-card">
-        <div class="angle-label">Current Angle</div>
+        <div class="angle-label">現在の角度</div>
         <div class="angle-value" id="currentAngle">--</div>
       </div>
       <div class="angle-card">
-        <div class="angle-label">Peak Angle</div>
+        <div class="angle-label">最大角度</div>
         <div class="angle-value" id="peakAngle">--</div>
       </div>
       <div class="angle-card">
-        <div class="angle-label">Mode</div>
+        <div class="angle-label">測定モード</div>
         <div class="angle-mode" id="displayMode">--</div>
       </div>
     </section>
   </main>
 
   <footer>
-    <small>Powered by MediaPipe Tasks • All processing runs on-device • No data upload</small>
+    <small>すべての処理はデバイス上で実行されます • データのアップロードはありません</small>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
-  <script type="module" src="app.js?v=9"></script>
+  <script type="module" src="app.js?v=10"></script>
 </body>
 </html>

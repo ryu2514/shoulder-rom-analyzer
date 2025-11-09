@@ -186,7 +186,7 @@ function roundRect(ctx, x, y, w, h, r, fill) {
 
 // Pose setup
 async function initPose() {
-  status('Loading models…');
+  status('モデル読み込み中…');
   const filesetResolver = await FilesetResolver.forVisionTasks(
     // Use CDN for WASM assets
     "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
@@ -202,7 +202,7 @@ async function initPose() {
     minPosePresenceConfidence: 0.6,
     minTrackingConfidence: 0.6,
   });
-  status('Ready');
+  status('準備完了');
 }
 
 function status(s) { statusEl.textContent = s; }
@@ -309,7 +309,7 @@ function loopLive() {
 
 // Video file overlay & export (WebM/MP4 depending on browser)
 let cancelRequested = false;
-cancelBtn.addEventListener('click', ()=> { cancelRequested = true; status('Canceled'); hideProgress(); });
+cancelBtn.addEventListener('click', ()=> { cancelRequested = true; status('キャンセルしました'); hideProgress(); });
 
 function showProgress(text) { progressRow.style.display = 'flex'; progressText.textContent = text; }
 function hideProgress() { progressRow.style.display = 'none'; }
@@ -317,7 +317,7 @@ function hideProgress() { progressRow.style.display = 'none'; }
 async function processSelectedVideo() {
   if (!landmarker) await initPose();
   const file = fileInput.files?.[0]; if (!file) return;
-  status('Preparing video…'); showProgress('Preparing…'); cancelRequested = false;
+  status('動画準備中…'); showProgress('準備中…'); cancelRequested = false;
   downloadLink.style.display = 'none'; downloadLink.href = '';
   const url = URL.createObjectURL(file);
   const v = document.createElement('video');
@@ -377,7 +377,7 @@ async function processSelectedVideo() {
     updateAngleDisplay(angle, videoPeakAngle, m, s);
   };
 
-  status('Recording…'); showProgress('Recording…');
+  status('録画中…'); showProgress('録画中…');
   rec.start(250);
 
   // Start video from beginning and wait for it to be ready to play
@@ -414,11 +414,11 @@ async function processSelectedVideo() {
   // If force MP4 and we recorded WebM, try ffmpeg.wasm transcode
   if (!mimeMp4 && forceMp4.checked) {
     try {
-      status('Converting to MP4…'); showProgress('Converting to MP4… 0%');
-      blob = await convertWebMToMp4(blob, (p)=> { if (!cancelRequested) showProgress(`Converting to MP4… ${Math.round(p*100)}%`); });
+      status('MP4変換中…'); showProgress('MP4変換中… 0%');
+      blob = await convertWebMToMp4(blob, (p)=> { if (!cancelRequested) showProgress(`MP4変換中… ${Math.round(p*100)}%`); });
     } catch (e) {
       console.error(e);
-      status('Conversion failed; providing WebM');
+      status('変換失敗、WebMを提供');
     }
   }
   const isMp4 = blob.type === 'video/mp4';
@@ -426,8 +426,8 @@ async function processSelectedVideo() {
   downloadLink.style.display = 'inline-block';
   downloadLink.href = outUrl;
   downloadLink.download = `overlay_${Date.now()}.${isMp4?'mp4':'webm'}`;
-  downloadLink.textContent = `Download ${isMp4?'MP4':'WebM'}`;
-  status('Done'); hideProgress();
+  downloadLink.textContent = `ダウンロード (${isMp4?'MP4':'WebM'})`;
+  status('完了'); hideProgress();
 
   // Keep final angle display showing the peak from the video
   // No reset here - user can see the final result
@@ -466,7 +466,7 @@ switchCameraBtn.addEventListener('click', switchCamera);
 fileInput.addEventListener('change', ()=> { processBtn.disabled = !fileInput.files?.length; });
 processBtn.addEventListener('click', processSelectedVideo);
 
-status('Idle');
+status('待機中');
 // HTTPS/localhost warning
 if (!(location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
   const el = document.querySelector('#httpsWarn'); if (el) el.style.display = 'block';
