@@ -1,0 +1,147 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.example.shoulderrom.ui.PoseOverlayView
+        android:id="@+id/poseOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="false"
+        android:focusable="false" />
+
+    <TextView
+        android:id="@+id/angleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="16dp"
+        android:text="--.-°"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:background="#66000000"
+        android:textColor="#FFFFFF"
+        android:padding="8dp" />
+
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_margin="16dp"
+        android:text="MODE: ABD L"
+        android:textSize="14sp"
+        android:background="#66000000"
+        android:textColor="#FFFFFF"
+        android:padding="6dp" />
+
+    <LinearLayout
+        android:id="@+id/controls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:padding="8dp"
+        android:orientation="vertical"
+        android:background="#66000000">
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/sideGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSideLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="LEFT" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSideRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RIGHT" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/modeGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnModeAbd"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="ABD" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnModeFlex"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="FLEX" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnModeExt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="EXT" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="8dp">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnResetPeak"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reset Peak" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSavePng"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Save PNG"
+                android:layout_marginStart="8dp" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnExportCsv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Export CSV"
+                android:layout_marginStart="8dp" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnOverlayVideo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Overlay Video"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="8dp">
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:max="100"/>
+            <TextView
+                android:id="@+id/progressText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Processing…"
+                android:textColor="#FFFFFF"
+                android:visibility="gone"/>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

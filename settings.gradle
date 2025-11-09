@@ -1,0 +1,3 @@
+rootProject.name = "shoulderrom"
+include(":app")
+

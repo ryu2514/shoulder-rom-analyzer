@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#111111" />
+  <title>Shoulder ROM Web Demo</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="styles.css?v=4" />
+</head>
+<body>
+  <header>
+    <h1>Shoulder ROM Analyzer</h1>
+    <p class="subtitle">AI-powered shoulder range of motion analysis using MediaPipe</p>
+  </header>
+
+  <main>
+    <div id="httpsWarn" class="warn" style="display:none">Use HTTPS or localhost for camera/video access.</div>
+    <section class="controls">
+      <div class="row">
+        <label>Mode:</label>
+        <select id="mode">
+          <option value="ABDUCTION">ABD</option>
+          <option value="FLEXION">FLEX</option>
+        </select>
+        <label>Side:</label>
+        <select id="side">
+          <option value="LEFT">L</option>
+          <option value="RIGHT">R</option>
+        </select>
+      </div>
+      <div class="row">
+        <button id="startLive">Start Webcam</button>
+        <button id="stopLive" disabled>Stop</button>
+      </div>
+      <div class="row">
+        <input type="file" id="videoFile" accept="video/*" />
+      </div>
+      <div class="row">
+        <button id="processVideo" disabled>Overlay & Export</button>
+        <label class="small"><input type="checkbox" id="forceMp4" checked /> Force MP4</label>
+      </div>
+      <div class="row" id="progressRow" style="display:none">
+        <div id="progressText" class="small">Preparing…</div>
+        <button id="cancelBtn">Cancel</button>
+      </div>
+      <div class="row small" id="status">Idle</div>
+    </section>
+
+    <section class="stage">
+      <div class="video-wrap">
+        <video id="video" playsinline muted></video>
+        <canvas id="overlay"></canvas>
+      </div>
+      <a id="downloadLink" style="display:none" download>Download</a>
+      <video id="result" style="display:none; width:100%; max-width:960px; margin:12px auto 0;" controls playsinline></video>
+    </section>
+
+    <section class="angle-display">
+      <div class="angle-card">
+        <div class="angle-label">Current Angle</div>
+        <div class="angle-value" id="currentAngle">--</div>
+      </div>
+      <div class="angle-card">
+        <div class="angle-label">Peak Angle</div>
+        <div class="angle-value" id="peakAngle">--</div>
+      </div>
+      <div class="angle-card">
+        <div class="angle-label">Mode</div>
+        <div class="angle-mode" id="displayMode">--</div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <small>Powered by MediaPipe Tasks • All processing runs on-device • No data upload</small>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
+  <script type="module" src="app.js?v=8"></script>
+</body>
+</html>

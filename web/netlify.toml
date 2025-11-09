@@ -1,0 +1,45 @@
+# Netlify configuration for Shoulder ROM Web App
+
+[build]
+  publish = "."
+  command = "echo 'No build step required - static site'"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=*, microphone=(), geolocation=(), payment=()"
+    # Allow camera access for MediaPipe
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Content-Type = "text/css; charset=utf-8"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Redirect HTTP to HTTPS
+[[redirects]]
+  from = "http://shoulder-rom.netlify.app/*"
+  to = "https://shoulder-rom.netlify.app/:splat"
+  status = 301
+  force = true
+
+# SPA fallback (if needed for future routing)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
