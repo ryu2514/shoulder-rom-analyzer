@@ -49,8 +49,11 @@ const angle2D = (a,b,c,plane="xy") => {
   const P = (p) => plane === "xz" ? {x:p.x, y:0, z:p.z} : (plane === "yz" ? {x:0,y:p.y,z:p.z}:{x:p.x,y:p.y,z:0});
   return angleBetween(P(a), P(b), P(c));
 }
-function computeAngle(result, side, mode) {
-  if (!result.landmarks?.length) return null;
+function computeAngle(result, side, mode, enableDebug = false) {
+  if (!result.landmarks?.length) {
+    if (enableDebug) console.log('No landmarks detected');
+    return null;
+  }
   const lm = result.landmarks[0];
   const sh = lm[idx(side, 'shoulder')];
   const el = lm[idx(side, 'elbow')];
@@ -60,8 +63,19 @@ function computeAngle(result, side, mode) {
   const midHip = mid(hipL, hipR);
   const shouldersZDiff = Math.abs(shL.z - shR.z);
 
-  if (mode === Mode.ABDUCTION && shouldersZDiff > 0.12) return null;
-  if (mode === Mode.FLEXION && shouldersZDiff < 0.10) return null;
+  if (enableDebug) {
+    console.log(`Mode: ${mode}, Side: ${side}`);
+    console.log(`Shoulders Z-diff: ${shouldersZDiff.toFixed(4)}`);
+  }
+
+  if (mode === Mode.ABDUCTION && shouldersZDiff > 0.12) {
+    if (enableDebug) console.log('Abduction rejected: shoulders Z-diff > 0.12 (not frontal view)');
+    return null;
+  }
+  if (mode === Mode.FLEXION && shouldersZDiff < 0.10) {
+    if (enableDebug) console.log('Flexion rejected: shoulders Z-diff < 0.10 (not side view)');
+    return null;
+  }
 
   switch (mode) {
     case Mode.ABDUCTION: {
@@ -360,7 +374,8 @@ async function processSelectedVideo() {
   let frameCount = 0;
   let videoPeakAngle = null;
   const drawFrame = () => {
-    if (frameCount % 30 === 0) {
+    const enableDebug = frameCount % 30 === 0;
+    if (enableDebug) {
       console.log(`Drawing frame ${frameCount}, video time: ${v.currentTime.toFixed(2)}s, readyState: ${v.readyState}`);
     }
     frameCount++;
@@ -369,9 +384,14 @@ async function processSelectedVideo() {
     ctx.drawImage(v, 0, 0, overlay.width, overlay.height);
     const res = landmarker.detectForVideo(v, performance.now());
     const m = modeSel.value, s = sideSel.value;
-    const angle = computeAngle(res, s, m);
+    const angle = computeAngle(res, s, m, enableDebug);
     if (angle != null) {
       videoPeakAngle = Math.max(videoPeakAngle || 0, angle);
+      if (enableDebug) {
+        console.log(`Angle: ${angle.toFixed(1)}°, Peak: ${videoPeakAngle.toFixed(1)}°`);
+      }
+    } else if (enableDebug) {
+      console.log('Angle: null');
     }
     drawOverlay(res, angle, videoPeakAngle, m, s, true); // skipClear=true to preserve video frame
     updateAngleDisplay(angle, videoPeakAngle, m, s);
@@ -417,8 +437,9 @@ async function processSelectedVideo() {
       status('MP4変換中…'); showProgress('MP4変換中… 0%');
       blob = await convertWebMToMp4(blob, (p)=> { if (!cancelRequested) showProgress(`MP4変換中… ${Math.round(p*100)}%`); });
     } catch (e) {
-      console.error(e);
-      status('変換失敗、WebMを提供');
+      console.error('MP4変換エラー:', e);
+      alert('MP4変換に失敗しました。SharedArrayBufferが利用できないため、WebM形式で保存されます。\n\nMP4形式が必要な場合は、チェックボックスを外してください。');
+      status('WebM形式で保存');
     }
   }
   const isMp4 = blob.type === 'video/mp4';
